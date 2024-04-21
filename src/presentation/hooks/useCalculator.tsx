@@ -74,7 +74,88 @@ export const useCalculator = () => {
 
   };
 
- 
+  const setLastNumber = () => {
+
+    if ( number.endsWith( '.' ) ) {
+      setPrevNumber( number.slice( 0, -1 ) );
+    } else {
+      setPrevNumber( number );
+    }
+
+    setNumber( '0' );
+  }
+
+  const calculateLastOperation = () => {
+    if (lastOperation.current != undefined) {
+      const result = calculateResult()
+      setPrevNumber(result)
+      setNumber('0')
+    } else {
+      setLastNumber();
+    }
+  }
+
+  const divideOperation = () => {
+    calculateLastOperation();
+    lastOperation.current = Operator.divide;
+  }
+
+  const multiplyOperation = () => {
+    calculateLastOperation();
+    lastOperation.current = Operator.multiply;
+  }
+
+  const subtractOperation = () => {
+    calculateLastOperation();
+    lastOperation.current = Operator.subtract;
+  }
+
+  const addOperation = () => {
+    calculateLastOperation();
+    lastOperation.current = Operator.add;
+  }
+
+  const calculateResult = () => {
+      
+    const num1 = Number( number ); //NaN
+    const num2 = Number( prevNumber ); //NaN
+
+    switch( lastOperation.current ) {
+      
+      case Operator.add:
+        lastOperation.current = undefined
+        return ( `${ num2 + num1 }` );
+        break;
+
+      case Operator.subtract:
+        lastOperation.current = undefined
+        return ( `${ num2 - num1 }` );
+        break;
+
+      case Operator.multiply:
+        lastOperation.current = undefined
+        return ( `${ num2 * num1 }` );
+        break;
+
+      case Operator.divide:
+        lastOperation.current = undefined
+        return ( `${ num2 / num1 }` );
+        break;
+
+      default:
+        lastOperation.current = undefined
+        throw new Error('Operation not implemented');
+    }
+
+    //setPrevNumber('0');
+    
+  }
+
+  const calculateOperation = () =>{
+    const result = calculateResult()
+    setNumber(result)
+    setPrevNumber('0');
+  }
 
   return {
     // Properties
@@ -86,6 +167,11 @@ export const useCalculator = () => {
     toggleSign,
     clean,
     deleteOperation,
+    divideOperation,
+    multiplyOperation,
+    subtractOperation,
+    addOperation,
+    calculateOperation
   };
 }
 
